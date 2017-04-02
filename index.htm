@@ -1,0 +1,954 @@
+
+<!-- FONT AWESOME -->
+<script src="https://use.fontawesome.com/370aaf74a2.js"></script>
+
+<!-- BOOTSTRAP -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="assets/forms.css">
+
+<!-- JQUERY -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+<!-- FORM VALIDATION -->
+<script type="text/javascript" src="assets/jquery.validate.js"></script>
+
+<!-- FORM SLIDER -->
+<script type="text/javascript">
+$(document).ready(function(){
+	var current = 1;
+	
+	widget      = $(".step");
+	btnnext     = $(".next");
+	btnback     = $(".back"); 
+	btnsubmit   = $(".submit");
+
+	// INIT BUTTONS AND UI
+	widget.not(':eq(0)').hide();
+	hideButtons(current);
+	setProgress(current);
+
+	// NEXT BUTTON CLICK ACTION
+	btnnext.click(function(){
+		if(current < widget.length){
+			// CHECK VALIDATION
+			if($(".form").valid()){
+				widget.show();
+				widget.not(':eq('+(current++)+')').hide();
+				setProgress(current);
+			}
+		}
+		hideButtons(current);
+	})
+
+	// SUBMIT BUTTON CLICK
+	//btnsubmit.click(function(){
+	//	alert("Submit button clicked");
+	//});
+
+	// BACK BUTTON CLICK ACTION
+	btnback.click(function(){
+		if(current > 1){
+			current = current - 2;
+			if(current < widget.length){
+				widget.show();
+				widget.not(':eq('+(current++)+')').hide();
+				setProgress(current);
+			}
+		}
+		hideButtons(current);
+	})
+
+    $('.form').validate({ // INITIALIZE PLUGIN
+		ignore:":not(:visible)",			
+		rules: {
+			name     : "required",
+			email    : {required : true, email:true},
+			country  : "required",
+			username : "required",
+			password : "required",
+			rpassword: { required : true, equalTo: "#password"},
+		},
+    });
+});
+////////////////////////////////
+// CHANGE PROGRESS BAR ACTION //
+////////////////////////////////
+setProgress = function(currstep){
+	var percent = parseFloat(100 / widget.length) * currstep;
+	percent = percent.toFixed();
+	$(".progress-bar").css("width",percent+"%").html(percent+"%");		
+}
+////////////////////////////////////////////////
+// HIDE BUTTONS ACCORDING TO THE CURRENT STEP //
+////////////////////////////////////////////////
+hideButtons = function(current){
+	var limit = parseInt(widget.length); 
+
+	$(".action").hide();
+
+	if(current < limit) btnnext.show();
+	if(current > 1) btnback.show();
+	if (current == limit) { 
+		// Show entered values
+		$(".display label.lbl").each(function(){
+			$(this).html($("#"+$(this).data("id")).val());	
+		});
+		btnnext.hide(); 
+		btnsubmit.show();
+	}
+}
+
+</script>
+
+<style type="text/css">
+.back, .next, .submit {
+    display: inline-block;
+  	width: 100% !important;  
+  	height: 45px !important;
+  	margin: 7px 0px 0px 0px !important;
+  	padding: 0px 0px 0px 0px !important; 
+  	font-size: 16px !important;
+  	font-weight: normal !important;
+  	text-align: center !important;
+  	text-transform: uppercase !important;
+  	font-family: "FontAwesome", 'Open Sans' !important;
+  	vertical-align: middle !important;  
+  	border: 0px solid transparent !important;
+  	border-radius: 5px;
+    -ms-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -o-border-radius: 5px;
+    color: #ffffff; /* TEXT COLOR */
+    box-shadow: 0px 0px 0px transparent;
+    webkit-box-shadow: 0px 0px 0px transparent;
+    -moz-box-shadow: 0px 0px 0px transparent;
+}
+.back { /* BOOTSTRAP GREEN: #5CB85C / hover: #449D44, ZILLOW GREEN: HEX #74C005 / hover: #6CB403; RGBA (116,192,5,1) */  
+    background-color: #5CB85C;  
+}
+.back:hover {
+    background-color: #449D44;
+}
+.next, .submit { 
+    background-color: #046392;
+    background-image: linear-gradient(#2B7CA4, #046392);
+    background-image: -moz-linear-gradient(#2B7CA4, #046392);
+    background-image: -ms-linear-gradient(#2B7CA4, #046392);
+    background-image: -o-linear-gradient(#2B7CA4, #046392);
+    background-image: -webkit-linear-gradient(#2B7CA4, #046392);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2B7CA4', endColorstr='#046392') !important;
+}
+.next:hover, .submit:hover {
+    background-color: #1591D0;
+    background-image: linear-gradient(#49B3E8, #1591D0);
+    background-image: -moz-linear-gradient(#49B3E8, #1591D0);
+    background-image: -ms-linear-gradient(#49B3E8, #1591D0);
+    background-image: -o-linear-gradient(#49B3E8, #1591D0);
+    background-image: -webkit-linear-gradient(#49B3E8, #1591D0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#49B3E8', endColorstr='#1591D0') !important;
+}
+</style>
+
+<form id="sellerform" class="form form_wrap_light" data-toggle="validator" role="form" name="seller_form" method="post" action="/home-value-api/" autocomplete="off">
+<!-- class="inbound-now-form wpl-track-me inbound-track"-->
+
+<h2 class="viewport_title"><i class="fa fa-comments-o"></i> Send Us A Message</h2>
+      
+  <div class="progress">
+    
+    <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+
+  </div>
+
+<!--
+ ___ _____ ___ ___     _ 
+/ __|_   _| __| _ \   / |
+\__ \ | | | _||  _/   | |
+|___/ |_| |___|_|     |_|
+
+NAME -->
+
+  <div class="step">
+    <h3><i class="fa fa-user"></i>&nbsp; What's your name ?</h3>      
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">                
+            <div class="input-group-addon"><span class="fa fa-user"></span></div>
+
+            <input type="text" class="form-control" id="first_name" name="first_name" data-map-form-field="wpleads_first_name" required data-required="true" maxlength="100" placeholder="Name" onblur="if(this.placeholder==''){this.placeholder='Name'}" onfocus="if(this.placeholder=='Name'){ this.placeholder='';}"/>            
+                                        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--
+ ___ _____ ___ ___     ___ 
+/ __|_   _| __| _ \   |_  )
+\__ \ | | | _||  _/    / / 
+|___/ |_| |___|_|     /___|
+
+TYPE OF CLIENT? RENTER / BUYER / SELLER / INVESTOR / AGENT / LENDER -->
+
+  <div class="step">
+    <h3>Hi [name], which would you say describes you best <i class="fa fa-question"></i></h3>        
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+
+        <ul class="client_type">          
+          <li>
+            <input type="radio" id="BUYER" name="amount" checked="checked" />
+            <label for="BUYER">BUYER</label>
+          </li>
+          <li>
+            <input type="radio" id="SELLER" name="amount" />
+            <label for="SELLER">SELLER</label>
+          </li>
+          <li>
+            <input type="radio" id="INVESTOR" name="amount" />
+            <label for="INVESTOR">INVESTOR</label>
+          </li>
+          <li>
+            <input type="radio" id="AGENT" name="amount" />
+            <label for="AGENT">AGENT</label>
+          </li>
+          <li>
+            <input type="radio" id="LENDER" name="amount" />
+            <label for="LENDER">LENDER</label>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+<!--
+ ___ _____ ___ ___     ____
+/ __|_   _| __| _ \   |__ /
+\__ \ | | | _||  _/    |_ \
+|___/ |_| |___|_|     |___/
+
+IF BUYER > ASK THESE 5 QUESTIONS -->
+
+<!--
+ ___ ___     ___ _   ___   _____ ___    __  
+|_ _| __|   | _ ) | | \ \ / / __| _ \   \ \ 
+ | || _|    | _ \ |_| |\ V /| _||   /    > >
+|___|_|     |___/\___/  |_| |___|_|_\   /_/
+
+IF BUYER > ASK AREA / # BEDROOMS / # BATHROOMS / PRICE RANGE / TIME FRAME / CREDIT / WORKING WITH AGENT? -->
+
+  <div class="step">
+    <h3><i class="fa fa-map-marker"></i>&nbsp; <strong>BUYER</strong> Ok great! Which area are you looking to buy in ?</h3>      
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">                
+            <div class="input-group-addon"><span class="fa fa-map-marker"></span></div>
+
+            <select class="form-control" name="cityId">
+                      
+              <option value="1037">Agate</option>
+              <option value="11604">Alamosa</option>
+              <option value="1038">Allenspark</option>
+              <option value="1039">Alma</option>
+              <option value="1040">Arapahoe</option>
+              <option value="10909">Arriba</option>
+              <option value="1041">Arvada</option>
+              <option value="1042">Ault</option>
+              <option value="1043">Aurora</option>
+              <option value="1044">Avon</option>
+              <option value="1045">Bailey</option>
+              <option value="11595">Beulah</option>
+              <option value="11585">Black Forest</option>
+              <option value="11575">Blue River</option>
+              <option value="11601">Boone</option>
+              <option value="11603">Buena Vista</option>
+              <option value="1056">Burlington</option>
+              <option value="1058">Calhan</option>
+              <option value="11556">Canon City</option>
+              <option value="11580">Cascade</option>
+              <option value="1059">Castle Rock</option>
+              <option value="11598">Chipeta Park</option>
+              <option value="11607">Chipita Park</option>
+              <option value="11557">Colorado City</option>
+              <option value="1065">Colorado Springs</option>
+              <option value="1068">Como</option>
+              <option value="1070">Cotopaxi</option>
+              <option value="11558">Cripple Creek</option>
+              <option value="11591">Crystola</option>
+              <option value="1074" selected>Denver</option>
+              <option value="11559">Divide</option>
+              <option value="1083">Elbert</option>
+              <option value="1085">Elizabeth</option>
+              <option value="11610">Ellicott</option>
+              <option value="1092">Fairplay</option>
+              <option value="11560">Falcon</option>
+              <option value="1095">Flagler</option>
+              <option value="1096">Florence</option>
+              <option value="1097">Florissant</option>
+              <option value="1099">Fort Garland</option>
+              <option value="11561">Fountain</option>
+              <option value="11589">Fowler</option>
+              <option value="1103">Franktown</option>
+              <option value="11584">Gardner</option>
+              <option value="11605">Genoa</option>
+              <option value="11588">Goldfield</option>
+              <option value="11593">Green Mtn Falls</option>
+              <option value="1118">Guffey</option>
+              <option value="11576">Hanover</option>
+              <option value="1120">Hartsel</option>
+              <option value="1123">Highlands Ranch</option>
+              <option value="10919">Hugo</option>
+              <option value="1130">Jefferson</option>
+              <option value="1135">Kiowa</option>
+              <option value="11596">La Veta</option>
+              <option value="1140">Lake George</option>
+              <option value="1143">Larkspur</option>
+              <option value="11583">Las Animas</option>
+              <option value="11599">Limon</option>
+              <option value="1144">Littleton</option>
+              <option value="11562">Manitou Springs</option>
+              <option value="1153">Matheson</option>
+              <option value="11606">Moffat</option>
+              <option value="11587">Monte Vista</option>
+              <option value="1157">Monument</option>
+              <option value="11563">Ordway</option>
+              <option value="1163">Other</option>
+              <option value="1164">Palmer Lake</option>
+              <option value="11586">Park</option>
+              <option value="1165">Parker</option>
+              <option value="1167">Penrose</option>
+              <option value="1168">Peyton</option>
+              <option value="1173">Pueblo</option>
+              <option value="11564">Pueblo West</option>
+              <option value="1174">Ramah</option>
+              <option value="11579">Rockvale</option>
+              <option value="11608">Rocky Ford</option>
+              <option value="1178">Rush</option>
+              <option value="10890">Rye</option>
+              <option value="11565">Saguache</option>
+              <option value="11594">Security</option>
+              <option value="1179">Sedalia</option>
+              <option value="11577">Seibert</option>
+              <option value="1184">Simla</option>
+              <option value="11602">South Fork</option>
+              <option value="1189">Stratton</option>
+              <option value="11600">Texas Creek</option>
+              <option value="11566">Trinidad</option>
+              <option value="11590">Twin Lakes</option>
+              <option value="11609">Unknown</option>
+              <option value="1195">Victor</option>
+              <option value="11567">Vona</option>
+              <option value="11578">Walsenberg</option>
+              <option value="1198">Westcliffe</option>
+              <option value="1199">Westminster</option>
+              <option value="1200">Wetmore</option>
+              <option value="11592">Widefield</option>
+              <option value="11613">Williamsburg</option>
+              <option value="1204">Woodland Park</option>
+              <option value="1205">Yoder</option>
+
+            </select>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--
+ ___ _____ ___ ___     ___ 
+/ __|_   _| __| _    |_  )
+__  | | | _||  _/    / / 
+|___/ |_| |___|_|     /___|
+
+STEP 2 - # OF BEDROOMS IN THE HOME -->
+      
+  <div class="step">
+    <h3><i class="fa fa-bed"></i>&nbsp; <strong>BUYER</strong> How many bedrooms ?</h3>
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><span class="fa fa-bed"></span></div>
+
+            <select class="form-control" id="wpleads_bedrooms" name="wpleads_bedrooms" data-map-form-field="wpleads_bedrooms" required data-required="true">
+        
+              <option value=""> - Select -</option>
+              <option value="1+ Beds">1+</option>
+              <option value="2+ Beds">2+</option>
+              <option value="3+ Beds">3+</option>
+              <option value="4+ Beds">4+</option>
+              <option value="5+ Beds">5+</option>
+
+            </select>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--
+ ___ _____ ___ ___     ____
+/ __|_   _| __| _    |__ /
+__  | | | _||  _/    |_ 
+|___/ |_| |___|_|     |___/
+
+STEP 3 - # OF BATHROOMS IN THE HOME -->
+        
+  <div class="step">
+    <h3><i class="fa fa-bath"></i>&nbsp; <strong>BUYER</strong> How many bathrooms ?</h3>
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><span class="fa fa-bath"></span></div>
+              
+            <select class="form-control" id="wpleads_bathrooms" name="wpleads_bathrooms" data-map-form-field="wpleads_bathrooms" required data-required="true">
+              
+              <option value="">- Bathrooms -</option>
+              <option value="1+ Baths">1+</option>
+              <option value="2+ Baths">2+</option>
+              <option value="3+ Baths">3+</option>
+              <option value="4+ Baths">4+</option>
+              <option value="5+ Baths">5+</option>
+
+            </select>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- BUYER - TIME FRAME -->
+        
+  <div class="step">
+    <h3><i class="fa fa-calendar"></i>&nbsp; <strong>BUYER</strong> How soon were you looking to buy ?</h3>
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><span class="fa fa-calendar"></span></div>
+                  
+            <select class="form-control" id="wpleads_buyer_timeframe" name="wpleads_buyer_timeframe" data-map-form-field="wpleads_buyer_timeframe" required data-required="true">
+              
+              <option value="">- select -</option>
+              <option value="ASAP">ASAP</option>
+              <option value="30 days">within the next 30 days</option>
+              <option value="1 - 3 months">within 1 - 3 months</option>
+              <option value="3 - 6 months">within 3 - 6 months</option>
+              <option value="within 6 - 12 months">within 6 - 12 months</option>
+              <option value="over a year">sometime next year...</option>
+
+            </select>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- BUYER - PRICE RANGE -->
+        
+  <div class="step">
+    <h3><i class="fa fa-dollar"></i>&nbsp; <strong>BUYER</strong> What price range were you looking to buy in ?</h3>
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><span class="fa fa-dollar"></span></div>
+                  
+            <input class="form-control" type="text" placeholder="Max Price" onblur="if(this.placeholder==''){this.placeholder='Max Price'}" onfocus="if(this.placeholder=='Max Price'){ this.placeholder='';}" name="maxListPrice">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- BUYER - LOAN / PREAPPROVAL STATUS -->
+        
+  <div class="step">
+    <h3><i class="fa fa-university"></i>&nbsp; <strong>BUYER</strong> Have you been pre-approved for a loan yet ?</h3>
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><span class="fa fa-university"></span></div>
+                  
+            <select class="form-control" id="wpleads_preapproval_status" name="wpleads_preapproval_status" data-map-form-field="wpleads_preapproval_status" required data-required="true">
+              
+              <option value="">- select -</option>
+              <option value="not yet...">not yet...</option>
+              <option value="yes">yes</option>
+
+            </select>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- BUYER - LOAN / PREAPPROVAL AMOUNT (ONLY IF PREAPPROVED FOR A LOAN, ASK THIS QUESTION) -->
+        
+  <div class="step">
+    <h3><i class="fa fa-dollar"></i>&nbsp; <strong>BUYER</strong> Great! How much are you approved for ?</h3>
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><span class="fa fa-dollar"></span></div>
+                
+            <input class="form-control" type="text" placeholder="Loan Amount" onblur="if(this.placeholder==''){this.placeholder='Loan Amount'}" onfocus="if(this.placeholder=='Loan Amount'){ this.placeholder='';}" name="Loan_Amount">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- BUYER - CURRENTLY WORKING WITH AN AGENT ? -->
+        
+  <div class="step">
+    <h3><i class="fa fa-user"></i>&nbsp; <strong>BUYER</strong> Are you currently working with an agent ?</h3>
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><span class="fa fa-user"></span></div>
+                  
+              <select class="form-control" id="wpleads_preapproval_status" name="wpleads_preapproval_status" data-map-form-field="wpleads_preapproval_status" required data-required="true">
+                
+                <option value="">- select -</option>
+                <option value="not yet">not yet... that's why I'm writing you :)</option>
+                <option value="yes. has an agent">yes I am</option>
+
+              </select>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- INFO TEXT AREA -->
+
+  <div class="step">
+    <h3><i class="fa fa-university"></i>&nbsp; <strong>BUYER</strong> Tell us anything you want us to know about yourself</h3>
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">
+
+            <textarea id="message" class="form-control" name="wpleads_notes" data-map-form-field="wpleads_notes" data-ignore-form-field="true" required data-required="true" placeholder="&#xf040; &nbsp;type" onblur="if(this.placeholder==''){this.placeholder='&#xf040; &nbsp;type'}" onfocus="if(this.placeholder=='&#xf040; &nbsp;type'){ this.placeholder='';}"/></textarea>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- EMAIL ADDRESS -->
+
+  <div class="step">
+    <h3><i class="fa fa-envelope-o"></i>&nbsp; What's your email address so we can contact you ?</h3>
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">            
+            <div class="input-group-addon"><span class="fa fa-envelope-o"></span></div>
+
+            <input id="email" type="email" class="form-control" name="inputEmail" data-map-form-field="wpleads_email_address" required data-required="true" maxlength="200" pattern="[A-Za-z0-9._%+-]{3,}@[a-zA-Z]{3,}([.]{1}[a-zA-Z]{2,}|[.]{1}[a-zA-Z]{2,}[.]{1}[a-zA-Z]{2,})" data-error="Your email address appears invalid! Please correct." placeholder="Email" onblur="if(this.placeholder==''){this.placeholder='Email'}" onfocus="if(this.placeholder=='Email'){ this.placeholder='';}" />
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- PHONE NUMBER -->
+
+  <div class="step">
+    <h3><i class="fa fa-phone"></i>&nbsp; And your phone number ? &nbsp; You know..... &nbsp; Just in case ;)</h3>
+      <div class="row gutter-10">
+        <div class="col-lg-12"> 
+          <div class="form-group">
+            <div class="input-group">
+              <div class="input-group-addon"><span class="fa fa-phone"></span></div>
+
+              <input id="number" type="tel" class="form-control" name="telephone" data-map-form-field="wpleads_mobile_phone"  required data-required="true" placeholder="Phone" onblur="if(this.placeholder==''){this.placeholder='Phone'}" onfocus="if(this.placeholder=='Phone'){ this.placeholder='';}" />
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--
+ ___ _____ ___ ___     ___ 
+/ __|_   _| __| _    |_  )
+__  | | | _||  _/    / / 
+|___/ |_| |___|_|     /___|
+
+STEP 2 - # OF BEDROOMS IN THE HOME -->
+      
+  <div class="step">
+    <h3><i class="fa fa-bed"></i>&nbsp; How many bedrooms ?</h3>
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><span class="fa fa-bed"></span></div>
+
+            <select class="form-control" id="wpleads_bedrooms" name="wpleads_bedrooms" data-map-form-field="wpleads_bedrooms" required data-required="true">
+        
+              <option value=""> - Select -</option>
+              <option value="1+ Beds">1+</option>
+              <option value="2+ Beds">2+</option>
+              <option value="3+ Beds">3+</option>
+              <option value="4+ Beds">4+</option>
+              <option value="5+ Beds">5+</option>
+
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--
+ ___ _____ ___ ___     ____
+/ __|_   _| __| _    |__ /
+__  | | | _||  _/    |_ 
+|___/ |_| |___|_|     |___/
+
+STEP 3 - # OF BATHROOMS IN THE HOME -->
+        
+  <div class="step">
+
+    <h3><i class="fa fa-bath"></i>&nbsp; How many bathrooms ?</h3>
+
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><span class="fa fa-bath"></span></div>
+              <select class="form-control" id="wpleads_bathrooms" name="wpleads_bathrooms" data-map-form-field="wpleads_bathrooms" required data-required="true">
+                
+                <option value="">- Bathrooms -</option>
+                <option value="1+ Baths">1+</option>
+                <option value="2+ Baths">2+</option>
+                <option value="3+ Baths">3+</option>
+                <option value="4+ Baths">4+</option>
+                <option value="5+ Baths">5+</option>
+
+              </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--
+ ___ _____ ___ ___     _ _  
+/ __|_   _| __| _    | | | 
+__  | | | _||  _/   |_  _|
+|___/ |_| |___|_|       |_| 
+                             
+STEP 4 - APPROXIMATE SQUARE FOOTAGE OF THE HOME -->
+
+  <div class="step">
+
+    <h3><i class="fa fa-arrows-alt"></i>&nbsp; About how many square feet would you say your house is ?</h3>
+
+    <div class="row gutter-10">
+
+      <div class="col-lg-12">
+
+        <div class="form-group">
+
+            <div class="input-group">
+
+              <div class="input-group-addon"><span class="fa fa-arrows-alt"></span></div>
+
+                  <select class="form-control" id="wpleads_sqft" name="wpleads_sqft" data-map-form-field="wpleads_sqft" required data-required="true">
+                            
+                      <option value="">- Square Footage -</option>
+                      <option value="0-500">0-500</option>
+                      <option value="500 - 1,000">500 - 1,000</option>
+                      <option value="1,000 - 1,500">1,000 - 1,500</option>
+                      <option value="1,500 - 2,000">1,500 - 2,000</option>
+                      <option value="2,000 - 2,500">2,000 - 2,500</option>
+                      <option value="2,500 - 3,000">2,500 - 3,000</option>
+                      <option value="3,000 +">3,000 +</option>
+
+                  </select>
+
+            </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+<!--
+ ___ _____ ___ ___     ___ 
+/ __|_   _| __| _    | __|
+__  | | | _||  _/   |__ 
+|___/ |_| |___|_|     |___/
+
+STEP 5 - CONDITION OF THE HOME -->
+
+  <div class="step">
+
+    <h3><i class="fa fa-star-o"></i>&nbsp; What would you say is the condition of your home ?</h3>
+
+    <div class="row gutter-10">
+
+      <div class="col-lg-12">
+
+        <div class="form-group">
+
+            <div class="input-group">
+
+              <div class="input-group-addon"><span class="fa fa-star-o"></span></div>
+
+                <select class="form-control" id="wpleads_condition" name="wpleads_condition" data-map-form-field="wpleads_seller_condition" required data-required="true">
+                  
+                    <option value="">- Condition -</option>
+                    <option value="Excellent">Excellent</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                    <option value="Poor">Poor</option>
+
+                  </select>
+
+            </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+<!--
+ ___ _____ ___ ___      __ 
+/ __|_   _| __| _     / / 
+__  | | | _||  _/   / _ 
+|___/ |_| |___|_|     ___/
+
+STEP 6 - TIME FRAME TO SELL THE HOME OF THE HOME -->
+
+  <div class="step">
+
+    <h3><i class="fa fa-calendar"></i>&nbsp; When are you planning on selling your home ?</h3>
+
+    <div class="row gutter-10">
+
+      <div class="col-lg-12">
+
+        <div class="form-group">
+
+            <div class="input-group">
+
+              <div class="input-group-addon"><span class="fa fa-calendar"></span></div>
+
+                <select class="form-control" id="wpleads_seller_timeframe" name="wpleads_seller_timeframe" data-map-form-field="wpleads_seller_timeframe" required data-required="true">
+                  
+                    <option value="">- Time Frame -</option>
+                    <option value="Need To Sell ASAP">Need To Sell ASAP</option>
+                    <option value="Within Next 30 Days">Within Next 30 Days</option>
+                    <option value="Within 1 - 3 Months">Within 1 - 3 Months</option>
+                    <option value="Within 3 - 6 Months">Within 3 - 6 Months</option>
+                    <option value="Within 9 - 12 Months">Within 9 - 12 Months</option>
+                    <option value="Over A Year">Over A Year</option>
+                    <option value="Not Selling, Just Curious">Not Selling, Just Curious</option>
+
+                  </select>
+
+            </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+<!--
+ ___ _____ ___ ___     ____ 
+/ __|_   _| __| _    |__  |
+__  | | | _||  _/     / / 
+|___/ |_| |___|_|      /_/  
+
+STEP 7 - COLLECT NAME, EMAIL ADDRESS & PHONE NUMBER -->
+
+  <div class="step">
+
+    <h3><i class="fa fa-info-circle"></i>&nbsp; Where Would You Like Us To Send Your Valuation ?</h3>
+      
+    <div class="row gutter-10">
+
+        <div class="col-lg-4">
+
+          <div class="form-group">
+    
+              <div class="input-group">
+
+                  <div class="input-group-addon"><span class="fa fa-user"></span></div>                   
+
+                  <input type="text" class="form-control" id="first_name" name="first_name" data-map-form-field="wpleads_first_name" required data-required="true" maxlength="100" placeholder="Name" onblur="if(this.placeholder==''){this.placeholder='Name'}" onfocus="if(this.placeholder=='Name'){ this.placeholder='';}"/>
+  
+              </div>
+
+          </div>
+
+        </div>
+
+        <div class="col-lg-4">
+              
+          <div class="input-group">
+
+                <div class="input-group-addon"><span class="fa fa-envelope"></span></div>              
+
+                <input type="email" id="inputEmail" class="form-control" name="inputEmail" data-map-form-field="wpleads_email_address"  required data-required="true" maxlength="200" pattern="[A-Za-z0-9._%+-]{3,}@[a-zA-Z]{3,}([.]{1}[a-zA-Z]{2,}|[.]{1}[a-zA-Z]{2,}[.]{1}[a-zA-Z]{2,})" data-error="Your email address appears invalid! Please correct." placeholder="Email" onblur="if(this.placeholder==''){this.placeholder='Email'}" onfocus="if(this.placeholder=='Email'){ this.placeholder='';}" />
+                                    
+          </div>
+
+        </div>
+
+          <div class="col-lg-4">
+                                
+            <div class="input-group">
+
+                <div class="input-group-addon"><span class="fa fa-phone"></span></div>                  
+
+                <input type="tel" class="form-control" id="telephone" name="telephone" data-map-form-field="wpleads_mobile_phone"  placeholder="Phone" onblur="if(this.placeholder==''){this.placeholder='Phone'}" onfocus="if(this.placeholder=='Phone'){ this.placeholder='';}" />
+                                          
+                <!-- required data-required="true" maxlength="14" pattern="(?:(d{3})|d{3})[- ]?d{3}[- ]?d{4}" -->
+            
+            </div>
+
+          </div>
+
+      </div>
+
+  </div>
+
+<!-- BUTTONS -->
+
+  <div class="row gutter-10">
+    
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+      
+      <button type="button" class="action back"><i class="fa fa-angle-double-left"></i>&nbsp; Back</button>
+
+    </div>
+
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+
+      <button type="button" class="action next">Next &nbsp;<i class="fa fa-angle-double-right"></i></button>
+      <button type="submit" class="action submit" id="submit" name="zillow_submit">Submit &nbsp;<i class="fa fa-angle-double-right"></i></button>
+
+      </div>
+
+  </div>
+
+<!-- HIDDEN FIELDS -->
+
+<input data-ignore-form-field="true" type="hidden" name="inbound_submitted" value="1">
+<input type="hidden" name="inbound_form_n" class="inbound_form_n" value="seller_form">
+<input type="hidden" name="inbound_form_lists" id="inbound_form_lists" value="11" data-map-form-field="inbound_form_lists">
+<input type="hidden" name="inbound_form_id" class="inbound_form_id" value="135">
+
+<!--
+<input type="hidden" name="inbound_current_page_url" value="http://www.propertunity.co/seller-test-form/">
+<input type="hidden" name="page_id" value="287">
+
+<input type="hidden" name="inbound_furl" value=""> PAGE REDIRECT AFTER SUBMIT-->
+<input type="hidden" name="inbound_notify" value="MzAzcHJvcGVydHVuaXR5QGdtYWlsLmNvbQ==">      
+<input type="hidden" class="inbound_params" name="inbound_params" value="">
+
+</form>
+
+<!-- VERIFY INFORMATION 
+
+  <div class="step display">
+    
+    <h3><i class="fa fa-phone"></i>&nbsp; Almost done! Does everything look ok ?</h3>
+
+    <div class="row gutter-10">
+      <div class="col-lg-6">            
+          <label class="pull-right"><strong>Name: </strong></label>           
+      </div>
+      <div class="col-lg-6">
+        <label class="lbl pull-left" data-id="name"></label>
+      </div>
+    </div>
+
+    <div class="row gutter-10">
+      <div class="col-lg-6">            
+          <label class="pull-right"><strong>Email: </strong></label>            
+      </div>
+      <div class="col-lg-6">
+        <label class="lbl pull-left" data-id="email"></label>
+      </div>
+    </div>
+
+    <div class="row gutter-10">
+      <div class="col-lg-6">            
+          <label class="pull-right"><strong>Phone: </strong></label>            
+      </div>
+      <div class="col-lg-6">
+        <label class="lbl pull-left" data-id="number"></label>
+      </div>
+    </div>
+
+    <div class="row gutter-10">
+      <div class="col-lg-6">            
+          <label class="pull-right"><strong>Employed: </strong></label>           
+      </div>
+      <div class="col-lg-6">
+        <label class="lbl pull-left" data-id="employed"></label>
+      </div>
+    </div>
+
+    <div class="row gutter-10">
+      <div class="col-lg-6">            
+          <label class="pull-right"><strong>Deals: </strong></label>            
+      </div>
+      <div class="col-lg-6">
+        <label class="lbl pull-left" data-id="monthly_deals_closed"></label>
+      </div>
+    </div>      
+
+    <div class="row gutter-10">
+      <div class="col-lg-6">            
+          <label class="pull-right"><strong>Message: </strong></label>            
+      </div>
+      <div class="col-lg-6">
+        <label class="lbl pull-left" data-id="message"></label>
+      </div>
+    </div>
+
+    <br>
+
+  </div>
+
+-->

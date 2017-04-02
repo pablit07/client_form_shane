@@ -1,0 +1,384 @@
+/*
+  ___ ___ ___             ___ ___  ___ __  __ ___ 
+ / __/ __/ __|    ___    | __/ _ \| _ \  \/  / __|
+| (__\__ \__ \   |___|   | _| (_) |   / |\/| \__ \
+ \___|___/___/           |_| \___/|_|_\_|  |_|___/
+
+EXAMPLE HTML OF FORM GROUP:
+
+<div class="form-group">
+
+  <div class="input-group">
+        
+    <div class="input-group-addon"><span class="fa fa-user"></span></div>
+
+    <input type="text"  class="form-control" id="" name="" placeholder="Name" onblur="if(this.placeholder==''){this.placeholder='Name'}" onfocus="if(this.placeholder=='Name'){ this.placeholder='';}"/>
+                                      
+  </div>
+
+</div>*/                                                   
+
+/***************
+* FORM WRAPPER *
+***************/
+
+.form_wrap_light {
+	padding: 10px !important;
+	margin: 0px !important;
+	border: 0px solid #F1F1F1;
+	border-radius: 5px;
+	-ms-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-o-border-radius: 5px;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.1) !important;
+	webkit-box-shadow: 0 1px 4px 0 rgba(0,0,0,0.1) !important;
+  -moz-box-shadow: x 0 rgba(0,0,0,0.1) !important;	
+	position: relative !important; /* KEEPS WRAPPER ABOVE #video_layer */
+  z-index: 99 !important;
+}
+.form_wrap_light { /* OPAQUE WHITE BG W/ BORDER */
+	background: rgba(255, 255, 255, 0.6);
+	background-color: rgba(255, 255, 255, 0.6);
+}
+.form_wrap_dark {
+  margin-left: 5% !important;
+  margin-right: 5% !important;
+  border: 1px solid #000000;
+  background: rgba(0, 0, 0, .5) !important;
+  background-color: rgba(0, 0, 0, .5) !important;
+}
+.form_wrap_dark .progress,
+.form_wrap_dark .input-group,
+.form_wrap_dark button {
+  box-shadow: 5px 5px 25px rgba(0,0,0,0.9) !important;
+  webkit-box-shadow: 5px 5px 25px rgba(0,0,0,0.9) !important;
+   -moz-box-shadow: 5px 5px 25px rgba(0,0,0,0.9) !important;
+}
+.form_wrap_dark .progress {
+  background: rgba(255, 255, 255, .4) !important; 
+  border-radius: 5px !important; 
+}
+.secure { /* SECURITY DISCLAIMER BELOW LEAD FORM */
+  color: #0b8043 !important;
+}
+
+
+
+/**************
+* FORM FIELDS *
+**************/
+
+.form-group {  
+	padding: 0px 0px 0px 0px !important;
+	margin: 0px 0px 0px 0px !important;
+}
+.input-group {
+	width: 100% !important;
+	margin: 5px 0px 5px 0px !important;
+}
+.input-group-addon { /* LEFT FONTAWESOME ICON SECTION OF FORM FIELD  */
+  width: 45px !important;
+  min-width: 45px;  /* KEEPS ICON LABELS SAME SIZE FOR VERTICAL MENU */
+  height: 45px !important;
+  max-height: 45px !important;
+  text-align: center !important;    
+  color: #454A54 !important;
+  font-size: 16px !important;
+  line-height: 26px !important;
+  font-weight: normal !important;
+  font-family: "FontAwesome", 'Open Sans' !important;
+  border-top-left-radius: 5px !important;
+  border-bottom-left-radius: 5px !important;
+  background: linear-gradient(#F4F4F4, #E9E9E9) !important; /* ORIGINALLY (#FEFEFE, #ECECEC) BUT CHANGED TO MATCH BOOTSTRAP */
+  background-color: linear-gradient(#F4F4F4, #E9E9E9) !important;
+  background-image: linear-gradient(#F4F4F4, #E9E9E9) !important;
+  background-image: -moz-linear-gradient(#F4F4F4, #E9E9E9) !important;
+  background-image: -ms-linear-gradient(#F4F4F4, #E9E9E9) !important;
+  background-image: -o-linear-gradient(#F4F4F4, #E9E9E9) !important;
+  background-image: -webkit-linear-gradient(#F4F4F4, #E9E9E9) !important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F4F4F4', endColorstr='#E9E9E9') !important;
+}
+.form-control { /* INPUT / SELECT FIELD */
+  width: 100% !important;
+  height: 45px !important;
+  display: inline-block !important;
+  text-align: left !important;
+  vertical-align: middle !important;  
+  font-size: 16px !important;
+  line-height: 26px !important;
+  border: 1px solid #DDDDDD !important; /* ORIGINALLY #CCCCCC BUT CHANGED TO MATCH BOOTSTRAP */
+  border-top-right-radius: 5px !important;
+  border-bottom-right-radius: 5px !important;
+  font-family: "FontAwesome", 'Open Sans' !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1) !important;
+  webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1) !important;
+  -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1) !important;
+}
+.form-control:focus {
+  border: 1px solid #CCCCCC !important;
+  box-shadow: none !important;
+  outline: 0 none !important;
+}
+select.form-control {
+  padding: 0px 0px 0px 3px !important;
+  cursor: pointer !important;
+}
+
+/***************************************************
+* GOOGLE CHROME AUTOCOMPLETE FORM FIELD CUSTOM CSS *
+***************************************************/
+
+input.form-control:-webkit-autofill,
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important; /* DISABLE YELLOW BACKGROUND */
+}
+textarea.form-control {
+  padding: 0px 0px 0px 3px !important;
+  height: 150px !important;
+  text-indent: 5px !important;
+  margin: 5px 0px 5px 0px !important;
+  color: #999999 !important; /* #999999 */
+  font-size: 16px !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  text-decoration: none !important;
+  font-family: "FontAwesome", 'Open Sans' !important;
+  border: 1px solid #CCCCCC !important;
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  border-radius: 5px;
+  -ms-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -o-border-radius: 5px;
+  box-shadow: none !important;
+  resize: none !important;
+}
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important; /* DISABLE YELLOW BACKGROUND */
+}
+
+/************************************ 
+* FORM FIELD PLACEHOLDER TEXT COLOR *
+************************************/
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: #454A54 !important;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color: #454A54 !important;
+  opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color: #454A54 !important;
+  opacity: 1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #454A54 !important;
+}
+:-webkit-autofill, :-webkit-autofill:hover, :-webkit-autofill:focus { /* CHANGES AUTOCOMPLETE STYLES IN CHROME */
+  border: 1px solid #CCCCCC ;
+  -webkit-text-fill-color: #454A54;
+  -webkit-box-shadow: 0 0 0px 1000px #FFFFFF inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/***************************************
+* CUSTOM FLAT CHECKBOXES & RADIO DIALS *
+****************************************
+
+HTML EXAMPLE USING FOLLOWING CSS
+
+<input id="box1" type="checkbox" />
+<label for="box1" class="checkbox_text">Checkbox 1</label>  
+
+<input id="radio1" type="radio" />   
+<label for="radio1" class="radio_text">Radio 1</label> 
+
+
+
+input[type=checkbox] { /* HIDES THE ORIGINAL CHECKBOX 
+  display:none; 
+}
+input[type=checkbox] + label:before {
+  font-size: 1.5em;
+  font-family: "FontAwesome", 'Open Sans' !important;
+  display: inline-block;
+  cursor: pointer;
+}
+input[type=radio] + label:before, .radio_text { /* MAKES RADIO DIAL LOOK SAME SIZE AS CHECKBOX 
+  font-size: 1.55em;
+}
+.checkbox_text, .radio_text {
+  margin-bottom: 4px;
+}
+input[type=checkbox] + label:before, input[type=radio] + label:before {  /* UNCHECKED ICON 
+  color: #768082;
+}
+input[type=checkbox] + label:before {
+  content: "\f096"; 
+}
+input[type=radio] { /* HIDES THE ORIGINAL RADIO DIAL 
+  display:none; 
+}
+input[type=radio] + label:before, .radio_text {
+  font-size: 1.5em;
+  font-family: "FontAwesome", 'Open Sans' !important;
+  display: inline-block;
+  cursor: pointer;
+}
+input[type=radio] + label:before {
+  content: "\f10c";
+}
+input[type=checkbox] + label:before, input[type=radio] + label:before { /* SPACE BETWEEN CHECKBOX AND LABEL 
+  letter-spacing: 10px;
+}
+input[type=checkbox]:checked + label:before, input[type=radio]:checked + label:before {  /* CHECKED ICONS */
+  color: #1591D0 !important;
+  letter-spacing: 6px; /* ALLOW SPACE FOR CHECKMARK 
+  /*
+  background: -webkit-linear-gradient(#49B3E8, #1591D0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+}
+input[type=checkbox]:checked + label:before {  /* CHECKED CHECKBOX ICON 
+    content: "\f046";
+}
+input[type=radio]:checked + label:before {  /* CHECKED RADIO ICON 
+    content: "\f05d";
+}
+*/
+/*
+ ___ _   _ _____ _____ ___  _  _ ___ 
+| _ ) | | |_   _|_   _/ _ \| \| / __|
+| _ \ |_| | | |   | || (_) | .` \__ \
+|___/\___/  |_|   |_| \___/|_|\_|___/
+                                      
+*/
+
+.back, .next, .submit {
+  display: inline-block;
+  width: 100% !important;  
+  height: 45px !important;
+  margin: 7px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important; 
+  font-size: 16px !important;
+  font-weight: normal !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  font-family: "FontAwesome", 'Open Sans' !important;
+  vertical-align: middle !important;  
+  border: 0px solid transparent !important;
+  border-radius: 5px;
+  -ms-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -o-border-radius: 5px;
+  color: #ffffff !important; /* TEXT COLOR */
+  box-shadow: 0px 0px 0px transparent !important;
+  webkit-box-shadow: 0px 0px 0px transparent !important;
+  -moz-box-shadow: 0px 0px 0px transparent !important;
+}
+.back { /* BOOTSTRAP GREEN: #5CB85C / hover: #449D44, ZILLOW GREEN: HEX #74C005 / hover: #6CB403; RGBA (116,192,5,1) */  
+  background-color: #5CB85C !important;  
+}
+.back:hover {
+  background-color: #449D44 !important;
+}
+.next, .submit { 
+  background-color: #046392 !important;
+  background-image: linear-gradient(#2B7CA4, #046392) !important;
+  background-image: -moz-linear-gradient(#2B7CA4, #046392) !important;
+  background-image: -ms-linear-gradient(#2B7CA4, #046392) !important;
+  background-image: -o-linear-gradient(#2B7CA4, #046392) !important;
+  background-image: -webkit-linear-gradient(#2B7CA4, #046392) !important;
+  filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#2B7CA4', endColorstr='#046392') !important;
+}
+.next:hover, .submit:hover {
+  background-color: #1591D0 !important;
+  background-image: linear-gradient(#49B3E8, #1591D0) !important;
+  background-image: -moz-linear-gradient(#49B3E8, #1591D0) !important;
+  background-image: -ms-linear-gradient(#49B3E8, #1591D0) !important;
+  background-image: -o-linear-gradient(#49B3E8, #1591D0) !important;
+  background-image: -webkit-linear-gradient(#49B3E8, #1591D0) !important;
+  filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#49B3E8', endColorstr='#1591D0') !important;
+}
+
+/* SELECT CLIENT TYPE BEFORE THEY FILL OUT THEIR FORM */
+
+
+.client_type {
+  list-style-type:none;
+  margin:25px 0 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.client_type li {
+  float:left;
+  margin:0 50px 0 0;
+  width: 100px;
+  height: 100px;
+  position: relative;
+}
+.client_type label, .client_type input {
+  display:block;
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  width: 100px;
+  height: 100px;
+  border-radius: 50% !important;
+  -webkit-border-radius: 50% !important;
+  -moz-border-radius: 50% !important;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.client_type input[type="radio"] {
+  opacity:0.01;
+  z-index:100;
+}
+
+.client_type input[type="radio"]:checked + label, .Checked + label {
+  color: #0088CC;
+  background:#ffffff;
+  border: 3px solid #0088CC;
+}
+.client_type label {
+  padding:5px;
+  border: 3px solid #f1f1f1;     
+ z-index:90;
+}
+.client_type label:hover {
+     background:#DDD;
+}
+
+/*
+<ul class="client_type">
+  <li>
+      <input type="radio" id="a25" name="amount">
+      <label for="a25">RENTER</label>
+  </li>
+  <li>
+      <input type="radio" id="a50" name="amount" checked="checked">
+      <label for="a50">BUYER</label>
+  </li>
+  <li>
+      <input type="radio" id="a75" name="amount">
+      <label for="a75">SELLER</label>
+  </li>
+  <li>
+      <input type="radio" id="a100" name="amount">
+      <label for="a100">AGENT</label>
+  </li>
+  <li>
+      <input type="radio" id="a100" name="amount">
+      <label for="a100">LENDER</label>
+  </li>
+</ul>
