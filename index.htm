@@ -19,11 +19,24 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	var current = 1;
-	
-	widget      = $(".step");
-	btnnext     = $(".next");
-	btnback     = $(".back"); 
-	btnsubmit   = $(".submit");
+  var sections = {};
+  var nameField = $('#first_name');
+  var nameProperty = $('.nameProperty');
+  var userDescriptionField = $('[name=amount]');
+
+
+  $('.field-section').each(function(i, section) {
+    var name = section.id.replace('_FIELDS', '');
+    sections[name] = $(section);
+    section = $(section.innerHTML).filter('.step');
+    sections[name].replaceWith(section);
+    sections[name] = section;
+  });
+
+  widget      = $(".step");
+  btnnext     = $(".next");
+  btnback     = $(".back"); 
+  btnsubmit   = $(".submit");
 
 	// INIT BUTTONS AND UI
 	widget.not(':eq(0)').hide();
@@ -37,8 +50,12 @@ $(document).ready(function(){
 			if($(".form").valid()){
 				widget.show();
 				widget.not(':eq('+(current++)+')').hide();
+        // check if current widget is the user description
+        if (widget.filter(':visible').find('[name=amount]').length) {
+          updateQuestions();
+        }
 				setProgress(current);
-			}
+      }
 		}
 		hideButtons(current);
 	})
@@ -72,34 +89,68 @@ $(document).ready(function(){
 			rpassword: { required : true, equalTo: "#password"},
 		},
     });
+
+    nameField.change(function() {
+      var nameFieldValue = nameField.val();
+      if (nameFieldValue) {
+        nameProperty.text(nameFieldValue);
+      }
+    });
+
+    userDescriptionField.on('change', updateQuestions);
+
+    function updateQuestions() {
+      var userDescriptionFieldValue = userDescriptionField.filter(':checked').val();
+      if (userDescriptionFieldValue) {
+        if (!sections[userDescriptionFieldValue]) console.error('Error: value '+userDescriptionFieldValue+' not found in keys:'+sections)
+        else {
+          for (var section in sections) {
+            if (section !== userDescriptionFieldValue) {
+              sections[section].remove();
+              widget = widget.not(sections[section]);
+            } else {
+              widget = widget.add(sections[section]);
+              widget.each(function(i, w) {
+                if (!$.contains(document, w)) {
+                  $(w).insertAfter(widget.filter(':visible'));
+                }
+              });
+            }
+          }
+        }
+      }
+    };
+
+
 });
-////////////////////////////////
-// CHANGE PROGRESS BAR ACTION //
-////////////////////////////////
-setProgress = function(currstep){
-	var percent = parseFloat(100 / widget.length) * currstep;
-	percent = percent.toFixed();
-	$(".progress-bar").css("width",percent+"%").html(percent+"%");		
-}
-////////////////////////////////////////////////
-// HIDE BUTTONS ACCORDING TO THE CURRENT STEP //
-////////////////////////////////////////////////
-hideButtons = function(current){
-	var limit = parseInt(widget.length); 
 
-	$(".action").hide();
+    ////////////////////////////////
+    // CHANGE PROGRESS BAR ACTION //
+    ////////////////////////////////
+    setProgress = function(currstep){
+      var percent = parseFloat(100 / widget.length) * currstep;
+      percent = percent.toFixed();
+      $(".progress-bar").css("width",percent+"%").html(percent+"%");    
+    }
+    ////////////////////////////////////////////////
+    // HIDE BUTTONS ACCORDING TO THE CURRENT STEP //
+    ////////////////////////////////////////////////
+    hideButtons = function(current){
+      var limit = parseInt(widget.length);
 
-	if(current < limit) btnnext.show();
-	if(current > 1) btnback.show();
-	if (current == limit) { 
-		// Show entered values
-		$(".display label.lbl").each(function(){
-			$(this).html($("#"+$(this).data("id")).val());	
-		});
-		btnnext.hide(); 
-		btnsubmit.show();
-	}
-}
+      $(".action").hide();
+
+      if(current < limit) btnnext.show();
+      if(current > 1) btnback.show();
+      if (current == limit) { 
+        // Show entered values
+        $(".display label.lbl").each(function(){
+          $(this).html($("#"+$(this).data("id")).val());  
+        });
+        btnnext.hide(); 
+        btnsubmit.show();
+      }
+    }
 
 </script>
 
@@ -197,29 +248,29 @@ NAME -->
 TYPE OF CLIENT? RENTER / BUYER / SELLER / INVESTOR / AGENT / LENDER -->
 
   <div class="step">
-    <h3>Hi [name], which would you say describes you best <i class="fa fa-question"></i></h3>        
+    <h3>Hi <span class="nameProperty">[name]</span>, which would you say describes you best <i class="fa fa-question"></i></h3>        
     <div class="row gutter-10">
       <div class="col-lg-12">
 
         <ul class="client_type">          
           <li>
-            <input type="radio" id="BUYER" name="amount" checked="checked" />
+            <input type="radio" value="BUYER" name="amount" checked="checked" />
             <label for="BUYER">BUYER</label>
           </li>
           <li>
-            <input type="radio" id="SELLER" name="amount" />
+            <input type="radio" value="SELLER" name="amount" />
             <label for="SELLER">SELLER</label>
           </li>
           <li>
-            <input type="radio" id="INVESTOR" name="amount" />
+            <input type="radio" value="INVESTOR" name="amount" />
             <label for="INVESTOR">INVESTOR</label>
           </li>
           <li>
-            <input type="radio" id="AGENT" name="amount" />
+            <input type="radio" value="AGENT" name="amount" />
             <label for="AGENT">AGENT</label>
           </li>
           <li>
-            <input type="radio" id="LENDER" name="amount" />
+            <input type="radio" value="LENDER" name="amount" />
             <label for="LENDER">LENDER</label>
           </li>
         </ul>
@@ -243,7 +294,7 @@ IF BUYER > ASK THESE 5 QUESTIONS -->
 |___|_|     |___/\___/  |_| |___|_|_\   /_/
 
 IF BUYER > ASK AREA / # BEDROOMS / # BATHROOMS / PRICE RANGE / TIME FRAME / CREDIT / WORKING WITH AGENT? -->
-
+<script type="text/html" id="BUYER_FIELDS" class="field-section">
   <div class="step">
     <h3><i class="fa fa-map-marker"></i>&nbsp; <strong>BUYER</strong> Ok great! Which area are you looking to buy in ?</h3>      
     <div class="row gutter-10">
@@ -541,6 +592,7 @@ STEP 3 - # OF BATHROOMS IN THE HOME -->
     </div>
   </div>
 
+
 <!-- INFO TEXT AREA -->
 
   <div class="step">
@@ -593,7 +645,7 @@ STEP 3 - # OF BATHROOMS IN THE HOME -->
       </div>
     </div>
   </div>
-
+</script>
 <!--
  ___ _____ ___ ___     ___ 
 / __|_   _| __| _    |_  )
@@ -601,7 +653,7 @@ __  | | | _||  _/    / /
 |___/ |_| |___|_|     /___|
 
 STEP 2 - # OF BEDROOMS IN THE HOME -->
-      
+<script type="text/html" id="SELLER_FIELDS" class="field-section">
   <div class="step">
     <h3><i class="fa fa-bed"></i>&nbsp; How many bedrooms ?</h3>
     <div class="row gutter-10">
@@ -850,6 +902,32 @@ STEP 7 - COLLECT NAME, EMAIL ADDRESS & PHONE NUMBER -->
       </div>
 
   </div>
+</script>
+
+
+<!-- To Do fields below -->
+
+<!-- 
+    INVESTOR FIELDS
+ -->
+<script type="text/html" id="INVESTOR_FIELDS" class="field-section">
+  
+</script>
+
+<!-- 
+    AGENT FIELDS
+ -->
+<script type="text/html" id="AGENT_FIELDS" class="field-section">
+  
+</script>
+
+<!-- 
+    LENDER FIELDS
+ -->
+<script type="text/html" id="LENDER_FIELDS" class="field-section">
+  
+</script>
+
 
 <!-- BUTTONS -->
 
