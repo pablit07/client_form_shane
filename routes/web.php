@@ -11,9 +11,15 @@
 |
 */
 
+
 $app->get('/', function () use ($app) {
     return $app->version();
 });
+
+$app->get('user/auth', function () {
+	$base = config('SITEURL');
+    return redirect($base . '/public/');
+})->middleware('auth.basic');
 
 $app->get('startcam', function() {
 	$cmd = '/Users/paulkohlhoff/Projects/dice/dice camera > /dev/null 2>&1 & echo $!; ';
@@ -22,4 +28,8 @@ $app->get('startcam', function() {
 	$pid = exec($cmd, $outputfile);
 	// exec(sprintf("%s > %s 2>&1 & echo $!", $cmd, $outputfile),$pidArr);
 	return 'Success! ' . $pid;
+});
+
+$app->get('ipaddress', function() {
+	return response()->json(['ipaddress' => $_SERVER['REMOTE_ADDR']]);
 });

@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dice Roll Recorder</title>
+</head>
+<body>
 
 <!-- FONT AWESOME -->
 <script src="https://use.fontawesome.com/370aaf74a2.js"></script>
@@ -14,6 +20,9 @@
 
 <!-- FORM VALIDATION -->
 <script type="text/javascript" src="assets/jquery.validate.js"></script>
+
+<!-- VIEW MODEL BINDING -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
 
 <style type="text/css">
 .back, .next, .submit {
@@ -127,3 +136,6 @@
   </div>
 
 </form>
+
+</body>
+</html>
