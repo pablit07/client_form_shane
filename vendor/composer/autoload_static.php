@@ -311,6 +311,7 @@ class ComposerStaticInit685322a06d8e78e945f7344a91a0f8b8
     );
 
     public static $classMap = array (
+        'CreateSettingTable' => __DIR__ . '/../..' . '/database/migrations/2017_04_07_234730_create_setting_table.php',
         'DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeds/DatabaseSeeder.php',
         'ExampleTest' => __DIR__ . '/../..' . '/tests/ExampleTest.php',
         'File_Iterator' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Iterator.php',
@@ -842,6 +843,7 @@ class ComposerStaticInit685322a06d8e78e945f7344a91a0f8b8
         'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => __DIR__ . '/..' . '/sebastian/recursion-context/src/InvalidArgumentException.php',
         'SebastianBergmann\\ResourceOperations\\ResourceOperations' => __DIR__ . '/..' . '/sebastian/resource-operations/src/ResourceOperations.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'Setting' => __DIR__ . '/../..' . '/database/migrations/2017_04_09_025540_Setting.php',
         'TestCase' => __DIR__ . '/../..' . '/tests/TestCase.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
     );

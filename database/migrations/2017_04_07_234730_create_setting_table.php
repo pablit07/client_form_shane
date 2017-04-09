@@ -12,6 +12,8 @@ class CreateSettingTable extends Migration
             $table->increments('id');
             // Schema declaration
             // Constraints declaration
+            $table->string('name');
+            $table->string('value')->nullable();
 
         });
     }
