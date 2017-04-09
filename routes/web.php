@@ -23,7 +23,7 @@ $app->get('/', function () use ($app) {
 //     return redirect($base . '/public/');
 // }]);
 
-$app->get('startcam', function() {
+function start_cam() {
 	$cmd = '/Users/paulkohlhoff/Projects/dice/dice camera > /dev/null 2>&1 & echo $!; ';
 	$camera_pid = Setting::firstOrCreate(['name' => 'camerapid']);
 
@@ -37,11 +37,9 @@ $app->get('startcam', function() {
 
 	$camera_pid->value = $pid;
 	$camera_pid->save();
+}
 
-	return 'Success! pid=' . $pid;
-});
-
-$app->get('stopcam', function() {
+function stop_cam() {
 	$camera_pid = Setting::firstOrCreate(['name' => 'camerapid']);
 	$pid = $camera_pid->value;
 
@@ -50,6 +48,16 @@ $app->get('stopcam', function() {
 		$camera_pid->value = null;
 		$camera_pid->save();
 	}
+}
+
+$app->get('startcam', function() {
+	start_cam();
+
+	return 'Success! pid=' . $pid;
+});
+
+$app->get('stopcam', function() {
+	stop_cam();
 
 	return 'Success! killed pid=' . $pid;
 });
@@ -61,8 +69,8 @@ $app->get('ipaddress', function() {
 $app->get('settings', function () {
 	$ip_address = Setting::firstOrCreate(['name' => 'ipaddress']);
 	$camera_state = Setting::firstOrCreate(['name' => 'camerastate']);
-    return response()->json(['ip_address' => $ip_address, 
-    						 'camera_state' => $camera_state
+    return response()->json(['ip_address' => $ip_address->value, 
+    						 'camera_state' => $camera_state->value
     						 ]);
 });
 
@@ -77,14 +85,19 @@ $app->post('settings', function (Request $request) {
 		$ip_address->value = $ip_address_value;
 	}
 
-	if ($camera_state_value) {
+	if ($camera_state_value !== null) {
 		$camera_state->value = $camera_state_value;
+		if ($camera_state_value === '1') {
+			start_cam();
+		} else {
+			stop_cam();
+		}
 	}
 
 	$ip_address->save();
 	$camera_state->save();
 
-    return response()->json(['ip_address' => $ip_address, 
-    						 'camera_state' => $camera_state
+    return response()->json(['ip_address' => $ip_address->value, 
+    						 'camera_state' => $camera_state->value
     						 ]);
 });
