@@ -25,7 +25,7 @@ $app->get('/', function () use ($app) {
 
 function start_cam() {
 	// $cmd = '/Users/paulkohlhoff/Projects/dice/dice camera > /dev/null 2>&1 & echo $!; ';
-	$cmd = 'xvfb-run /home/ubuntu/dice/dice.py';
+	$cmd = 'xvfb-run /home/ubuntu/dice/dice.py > /dev/null 2>&1 & echo $!;';
 	$camera_pid = Setting::firstOrCreate(['name' => 'camerapid']);
 
 	if ($camera_pid->value) {

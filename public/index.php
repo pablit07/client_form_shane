@@ -209,7 +209,7 @@ header.navbar {
         'ip_address': self.ipAddress(),
         'camera_state': self.cameraState(),
         'spreadsheet_id': self.spreadsheetId()
-      });
+      }).done(function() { alert('Saved!') });
     }
 
     this.authorize = function() {
