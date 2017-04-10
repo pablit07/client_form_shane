@@ -24,7 +24,8 @@ $app->get('/', function () use ($app) {
 // }]);
 
 function start_cam() {
-	$cmd = '/Users/paulkohlhoff/Projects/dice/dice camera > /dev/null 2>&1 & echo $!; ';
+	// $cmd = '/Users/paulkohlhoff/Projects/dice/dice camera > /dev/null 2>&1 & echo $!; ';
+	$cmd = 'xvfb-run /home/ubuntu/dice/dice.py';
 	$camera_pid = Setting::firstOrCreate(['name' => 'camerapid']);
 
 	if ($camera_pid->value) {
@@ -150,11 +151,13 @@ $app->get('spreadsheet/authredirect', function(Request $request) {
 	$client = get_client();
 
 	if ($error) {
-		Log::info($error);
+		Log::error($error);
+		return redirect(env('SITEURL') . '/public/error.html');
 	} else {
 		$accessToken = $client->fetchAccessTokenWithAuthCode($code);
 		if (isset($accessToken['error'])) {
-			Log::info($accessToken['error']);
+			Log::error($accessToken['error']);
+			return redirect(env('SITEURL') . '/public/error.html');
 		} else {
 			$spreadsheetCode = Setting::firstOrCreate(['name' => 'apitoken']);
 			$spreadsheetCode->value = json_encode($accessToken);
@@ -168,10 +171,23 @@ $app->get('spreadsheet/authredirect', function(Request $request) {
 $app->get('spreadsheet/test', function() {
 	$accessToken = json_decode(Setting::where(['name' => 'apitoken'])->first()->value, true);
 	$spreadsheetId = Setting::where(['name' => 'spreadsheetid'])->first()->value;
-	$client = get_client();
-	$client->setAccessToken($accessToken);
-	$service = new Google_Service_Sheets($client);
-	$service->spreadsheets_values->get($spreadsheetId, 'A1');
-	return response('', 200);
+	$is_valid = false;
+	$is_access_token_expired = true;
+	try {
+		$client = get_client();
+		$client->setAccessToken($accessToken);
+		$is_access_token_expired = $client->isAccessTokenExpired();
+	} catch(Exception $ex) {
+		Log::error($ex->getMessage());
+	}
+	if (!$is_access_token_expired) {
+		try {
+			$service = new Google_Service_Sheets($client);
+			$is_valid = $service->spreadsheets_values->get($spreadsheetId, 'A1') !== null;
+		} catch(Exception $ex) {
+			Log::error($ex->getMessage());
+		}
+	}
+	return response()->json(['is_valid' => $is_valid, 'is_access_token_expired' => $is_access_token_expired]);
 });
 

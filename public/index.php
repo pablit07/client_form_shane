@@ -94,7 +94,7 @@ header.navbar {
     <i class="fa fa-braille"></i> Craps Roll Recorder <i class="fa fa-braille"></i>
   </h2>
   <div class="pull-right">
-      <button id="btn-authorize-google-drive" data-bind='click: authorize'>Authorize Google Drive</button>
+      <button id="btn-authorize-google-drive" data-bind='click: authorize, text: (needsGoogleAuth() ? "Authorize Google Drive" : "Google Drive Authorized"), enable: needsGoogleAuth()'></button>
   </div>
 </header>
 <div class="container">
@@ -185,12 +185,20 @@ header.navbar {
     this.ipAddress = ko.observable('');
     this.spreadsheetId = ko.observable('');
     this.cameraState = ko.observable('0');
+    this.needsGoogleAuth = ko.observable(true);
 
     this.load = function(setInitialState) {
       $.get('../api/settings', function(data) {
         self.ipAddress(data.ip_address);
         self.cameraState(data.camera_state);
         self.spreadsheetId(data.spreadsheet_id);
+      });
+
+      $.get('../api/spreadsheet/test', function(data) {
+        if (!data.is_valid) {
+          alert('Error reading from spreadsheet!');
+        }
+        self.needsGoogleAuth(data.is_access_token_expired);
       });
     }
 
@@ -207,6 +215,18 @@ header.navbar {
     this.authorize = function() {
       $.get('../api/spreadsheet/auth', function(data) {
         console.info(data);
+        if (data.auth_url) {
+          var authWindow = window.open(data.auth_url);
+          var redirectCheck = setInterval(function() {
+            if (!authWindow) {
+              clearInterval(redirectCheck);
+            }
+            if (authWindow.location.href.indexOf('authredirect') !== -1) {
+              clearInterval(redirectCheck);
+              authWindow.close();
+            }
+          }, 500);
+        }
       });
     }
 
