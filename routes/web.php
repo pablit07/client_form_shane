@@ -33,7 +33,8 @@ function start_cam() {
 		$camera_pid->value = null;
 	}
 
-	$outputfile = fopen("/Users/paulkohlhoff/log.txt", "w");
+	// $outputfile = fopen("/Users/paulkohlhoff/log.txt", "w");
+	$outputfile = fopen("/home/ubuntu/log.txt", "w");
 	$pid = exec($cmd, $outputfile);
 
 	$camera_pid->value = $pid;
@@ -152,12 +153,12 @@ $app->get('spreadsheet/authredirect', function(Request $request) {
 
 	if ($error) {
 		Log::error($error);
-		return redirect(env('SITEURL') . '/public/error.html');
+		return redirect('http://' . $_SERVER['HTTP_HOST'] . env('SITEURL') . '/public/error.html');
 	} else {
 		$accessToken = $client->fetchAccessTokenWithAuthCode($code);
 		if (isset($accessToken['error'])) {
 			Log::error($accessToken['error']);
-			return redirect(env('SITEURL') . '/public/error.html');
+			return redirect('http://' . $_SERVER['HTTP_HOST'] . env('SITEURL') . '/public/error.html');
 		} else {
 			$spreadsheetCode = Setting::firstOrCreate(['name' => 'apitoken']);
 			$spreadsheetCode->value = json_encode($accessToken);
