@@ -84,8 +84,19 @@ header.navbar {
     background-image: -webkit-linear-gradient(#49B3E8, #1591D0);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#49B3E8', endColorstr='#1591D0') !important;
 }
+#btn-authorize-google-drive {
+  top: -30px;
+  position: relative;
+}
 </style>
-<header class="navbar navbar-light"><h2 class="viewport_title"><i class="fa fa-braille"></i> Craps Roll Recorder <i class="fa fa-braille"></i></h2></header>
+<header class="navbar navbar-light">
+  <h2 class="viewport_title">
+    <i class="fa fa-braille"></i> Craps Roll Recorder <i class="fa fa-braille"></i>
+  </h2>
+  <div class="pull-right">
+      <button id="btn-authorize-google-drive" data-bind='click: authorize'>Authorize Google Drive</button>
+  </div>
+</header>
 <div class="container">
 
 <form id="sellerform" class="form form_wrap_light" data-toggle="validator" role="form" name="seller_form" method="post" action="/home-value-api/" autocomplete="off">
@@ -110,14 +121,14 @@ header.navbar {
 
 
    <div class="step">
-    <h3>Google Sheets URL</h3>        
+    <h3>Google Sheet ID</h3>        
     <div class="row gutter-10">
       <div class="col-lg-12">
         <div class="form-group">
           <div class="input-group">   
             <div class="input-group-addon"><span class="fa fa-google"></span></div>
 
-            <input type="text" class="form-control" id="spreadsheet-url" name="spreadsheetUrl" required data-required="true" data-bind='value: spreadsheetUrl'/>       
+            <input type="text" class="form-control" id="spreadsheet-id" name="spreadsheetId" required data-required="true" data-bind='value: spreadsheetId'/>       
           </div>
         </div>
       </div>
@@ -172,13 +183,14 @@ header.navbar {
     var self = this;
 
     this.ipAddress = ko.observable('');
-    this.spreadsheetUrl = ko.observable('');
+    this.spreadsheetId = ko.observable('');
     this.cameraState = ko.observable('0');
 
     this.load = function(setInitialState) {
       $.get('../api/settings', function(data) {
         self.ipAddress(data.ip_address);
         self.cameraState(data.camera_state);
+        self.spreadsheetId(data.spreadsheet_id);
       });
     }
 
@@ -187,10 +199,17 @@ header.navbar {
     this.save = function() {
       $.post('../api/settings', {
         'ip_address': self.ipAddress(),
-        'camera_state': self.cameraState()
+        'camera_state': self.cameraState(),
+        'spreadsheet_id': self.spreadsheetId()
       });
     }
-    
+
+    this.authorize = function() {
+      $.get('../api/spreadsheet/auth', function(data) {
+        console.info(data);
+      });
+    }
+
   };
 
   $(function() {

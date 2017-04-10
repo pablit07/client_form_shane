@@ -4,7 +4,6 @@ namespace Illuminate\Auth\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
-use Log;
 
 class AuthenticateWithBasicAuth
 {
@@ -36,7 +35,6 @@ class AuthenticateWithBasicAuth
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        Log::info($guard);
         return $this->auth->guard($guard)->basic() ?: $next($request);
     }
 }
