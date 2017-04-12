@@ -76,10 +76,18 @@ $app->get('settings', function () {
 	$ip_address = Setting::firstOrCreate(['name' => 'ipaddress']);
 	$camera_state = Setting::firstOrCreate(['name' => 'camerastate']);
 	$spreadsheet_id = Setting::firstOrCreate(['name' => 'spreadsheetid']);
+	$camera_user = Setting::firstOrCreate(['name' => 'camerauser']);
+	$camera_pw = Setting::firstOrCreate(['name' => 'camerapw']);
+	$camera_http_port = Setting::firstOrCreate(['name' => 'camerahttpport']);
+	$camera_rtsp_port = Setting::firstOrCreate(['name' => 'camerartspport']);
 
     return response()->json(['ip_address' => $ip_address->value, 
     						 'camera_state' => $camera_state->value,
-    						 'spreadsheet_id' => $spreadsheet_id->value
+    						 'spreadsheet_id' => $spreadsheet_id->value,
+    						 'camera_user' => $camera_user->value,
+    						 'camera_pw' => $camera_pw->value,
+    						 'camera_http_port' => $camera_http_port->value,
+    						 'camera_rtsp_port' => $camera_rtsp_port->value
     						 ]);
 });
 
@@ -87,10 +95,18 @@ $app->post('settings', function (Request $request) {
 	$ip_address_value = $request->input('ip_address');
 	$camera_state_value = $request->input('camera_state');
 	$spreadsheet_id_value = $request->input('spreadsheet_id');
+	$camera_user_value = $request->input('camera_user');
+	$camera_pw_value = $request->input('camera_pw');
+	$camera_http_port_value = $request->input('camera_http_port');
+	$camera_rtsp_port_value = $request->input('camera_rtsp_port');
 
 	$ip_address = Setting::firstOrCreate(['name' => 'ipaddress']);
 	$camera_state = Setting::firstOrCreate(['name' => 'camerastate']);
 	$spreadsheet_id = Setting::firstOrCreate(['name' => 'spreadsheetid']);
+	$camera_user = Setting::firstOrCreate(['name' => 'camerauser']);
+	$camera_pw = Setting::firstOrCreate(['name' => 'camerapw']);
+	$camera_http_port = Setting::firstOrCreate(['name' => 'camerahttpport']);
+	$camera_rtsp_port = Setting::firstOrCreate(['name' => 'camerartspport']);
 
 	if ($ip_address_value) {
 		$ip_address->value = $ip_address_value;
@@ -109,13 +125,37 @@ $app->post('settings', function (Request $request) {
 		$spreadsheet_id->value = $spreadsheet_id_value;
 	}
 
+	if ($camera_user_value) {
+		$camera_user->value = $camera_user_value;
+	}
+
+	if ($camera_pw_value) {
+		$camera_pw->value = $camera_pw_value;
+	}
+
+	if ($camera_http_port_value) {
+		$camera_http_port->value = $camera_http_port_value;
+	}
+
+	if ($camera_rtsp_port_value) {
+		$camera_rtsp_port->value = $camera_rtsp_port_value;
+	}
+
 	$ip_address->save();
 	$camera_state->save();
 	$spreadsheet_id->save();
+	$camera_user->save();
+	$camera_pw->save();
+	$camera_http_port->save();
+	$camera_rtsp_port->save();
 
     return response()->json(['ip_address' => $ip_address->value, 
     						 'camera_state' => $camera_state->value,
-    						 'spreadsheet_id' => $spreadsheet_id->value
+    						 'spreadsheet_id' => $spreadsheet_id->value,
+     						 'camera_user' => $camera_user->value,
+    						 'camera_pw' => $camera_pw->value,
+    						 'camera_http_port' => $camera_http_port->value,
+    						 'camera_rtsp_port' => $camera_rtsp_port->value
     						 ]);
 });
 

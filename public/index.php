@@ -120,6 +120,69 @@ header.navbar {
     </div>
   </div>
 
+  <div class="step">
+    <h3>Camera User</h3>    
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">                
+            <div class="input-group-addon"><span class="fa fa-video-camera"></span></div>
+
+            <input type="text" class="form-control" id="camera-user" name="cameraUser" required data-required="true" maxlength="32" data-bind='value: cameraUser'/>            
+                                        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Camera Password</h3>    
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">                
+            <div class="input-group-addon"><span class="fa fa-video-camera"></span></div>
+
+            <input type="text" class="form-control" id="camera-password" name="cameraPassword" required data-required="true" maxlength="32" data-bind='value: cameraPw'/>            
+                                        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Camera HTTP Port</h3>    
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">                
+            <div class="input-group-addon"><span class="fa fa-video-camera"></span></div>
+
+            <input type="text" class="form-control" id="camera-http-port" name="cameraHttpPort" required data-required="true" maxlength="32" data-bind='value: cameraHttpPort'/>            
+                                        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Camera RTSP Port</h3>    
+    <div class="row gutter-10">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <div class="input-group">                
+            <div class="input-group-addon"><span class="fa fa-video-camera"></span></div>
+
+            <input type="text" class="form-control" id="camera-rtsp-port" name="cameraRtspPort" required data-required="true" maxlength="32" data-bind='value: cameraRtspPort'/>            
+                                        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
    <div class="step">
     <h3>Google Sheet ID</h3>        
@@ -202,10 +265,13 @@ header.navbar {
     this.cameraState = ko.observable('0');
     this.needsGoogleAuth = ko.observable(true);
     this.isCameraTestOn = ko.observable(false);
+    this.cameraUser = ko.observable('admin');
+    this.cameraPw = ko.observable('admin');
+    this.cameraHttpPort = ko.observable('20001');
+    this.cameraRtspPort = ko.observable('554');
 
     this.testCameraSrc = ko.computed(function () {
-      console.log(self.isCameraTestOn());
-      return self.isCameraTestOn() ? ('http://admin:admin@'+self.ipAddress()+'/video.htm') : '';
+      return self.isCameraTestOn() ? ('http://'+self.cameraUser()+':'+self.cameraPw()+'@'+self.ipAddress()+':'+self.cameraHttpPort()+'/video.htm') : '';
     });
 
     this.load = function(setInitialState) {
@@ -213,6 +279,10 @@ header.navbar {
         self.ipAddress(data.ip_address);
         self.cameraState(data.camera_state);
         self.spreadsheetId(data.spreadsheet_id);
+        self.cameraUser(data.camera_user);
+        self.cameraPw(data.camera_pw);
+        self.cameraHttpPort(data.camera_http_port);
+        self.cameraRtspPort(data.camera_rtsp_port);
       });
 
       $.get('../api/spreadsheet/test', function(data) {
@@ -229,7 +299,11 @@ header.navbar {
       $.post('../api/settings', {
         'ip_address': self.ipAddress(),
         'camera_state': self.cameraState(),
-        'spreadsheet_id': self.spreadsheetId()
+        'spreadsheet_id': self.spreadsheetId(),
+        'camera_user': self.cameraUser(),
+        'camera_pw': self.cameraPw(),
+        'camera_http_port': self.cameraHttpPort(),
+        'camera_rtsp_port': self.cameraRtspPort()
       }).done(function() { alert('Saved!') });
     }
 
