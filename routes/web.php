@@ -174,23 +174,29 @@ $app->get('spreadsheet/authredirect', function(Request $request) {
 });
 
 $app->get('spreadsheet/test', function() {
-	$accessToken = json_decode(Setting::where(['name' => 'apitoken'])->first()->value, true);
-	$spreadsheetId = Setting::where(['name' => 'spreadsheetid'])->first()->value;
+	try {
+		$accessToken = json_decode(Setting::where(['name' => 'apitoken'])->first()->value, true);
+		$spreadsheetId = Setting::where(['name' => 'spreadsheetid'])->first()->value;
+	} catch(Exception $ex) {
+
+	}
 	$is_valid = false;
 	$is_access_token_expired = true;
-	try {
-		$client = get_client();
-		$client->setAccessToken($accessToken);
-		$is_access_token_expired = $client->isAccessTokenExpired();
-	} catch(Exception $ex) {
-		Log::error($ex->getMessage());
-	}
-	if (!$is_access_token_expired) {
+	if (isset($accessToken) && isset($spreadsheetId)) {
 		try {
-			$service = new Google_Service_Sheets($client);
-			$is_valid = $service->spreadsheets_values->get($spreadsheetId, 'A1') !== null;
+			$client = get_client();
+			$client->setAccessToken($accessToken);
+			$is_access_token_expired = $client->isAccessTokenExpired();
 		} catch(Exception $ex) {
 			Log::error($ex->getMessage());
+		}
+		if (!$is_access_token_expired) {
+			try {
+				$service = new Google_Service_Sheets($client);
+				$is_valid = $service->spreadsheets_values->get($spreadsheetId, 'A1') !== null;
+			} catch(Exception $ex) {
+				Log::error($ex->getMessage());
+			}
 		}
 	}
 	return response()->json(['is_valid' => $is_valid, 'is_access_token_expired' => $is_access_token_expired]);
