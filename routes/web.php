@@ -155,11 +155,11 @@ $app->post('settings', function (Request $request) {
 		$camera_pw->value = $camera_pw_value;
 	}
 
-	if ($camera_http_port_value) {
+	if ($camera_http_port_value || $camera_http_port_value === '') {
 		$camera_http_port->value = $camera_http_port_value;
 	}
 
-	if ($camera_rtsp_port_value) {
+	if ($camera_rtsp_port_value || $camera_rtsp_port_value === '') {
 		$camera_rtsp_port->value = $camera_rtsp_port_value;
 	}
 
