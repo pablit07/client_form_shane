@@ -104,7 +104,8 @@ header.navbar {
 
 
   <div class="step">
-    <h3>Camera Network IP Address</h3>      
+    <h3>Camera Network IP Address</h3>    
+    <a href="javascript:void(0)" data-bind='click: useMyIp'>Use my IP</a>  
     <div class="row gutter-10">
       <div class="col-lg-12">
         <div class="form-group">
@@ -163,7 +164,7 @@ header.navbar {
     
       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
       
-      <button type="button" class="action back"><i class="fa fa-angle-double-left"></i>&nbsp; Reset</button>
+      <button type="button" class="action back" data-bind='click: load'><i class="fa fa-angle-double-left"></i>&nbsp; Reset</button>
 
     </div>
 
@@ -177,6 +178,20 @@ header.navbar {
 
 </form>
 </div>
+<br><br>
+<div class="container">
+  <div class="col-md-12">
+    <h4>Camera Test</h4>
+    <ul class="nav nav-pills">
+      <li data-bind="css: {active: isCameraTestOn()}, click: cameraTest(true)"><a href="javascript:void(0)">On</a></li>
+      <li data-bind="css: {active: !isCameraTestOn()}, click: cameraTest(false)"><a href="javascript:void(0)">Off</a></li>
+    </ul>
+  </div>
+
+  <div class="col-md-6" style="margin-top: 20px">
+    <iframe data-bind="attr: {src: testCameraSrc()}" width="420" height="246"></iframe>
+  </div>
+</div>
 
 <script type="text/javascript">
   var SettingsViewModel = function() {
@@ -186,6 +201,12 @@ header.navbar {
     this.spreadsheetId = ko.observable('');
     this.cameraState = ko.observable('0');
     this.needsGoogleAuth = ko.observable(true);
+    this.isCameraTestOn = ko.observable(false);
+
+    this.testCameraSrc = ko.computed(function () {
+      console.log(self.isCameraTestOn());
+      return self.isCameraTestOn() ? ('http://admin:admin@'+self.ipAddress()+'/video.htm') : '';
+    });
 
     this.load = function(setInitialState) {
       $.get('../api/settings', function(data) {
@@ -228,6 +249,18 @@ header.navbar {
           }, 500);
         }
       });
+    }
+
+    this.useMyIp = function() {
+      $.get('../api/ipaddress', function(data) {
+        if (data.ipaddress) {
+          self.ipAddress(data.ipaddress);
+        }
+      });
+    }
+
+    this.cameraTest = function(state) {
+      self.isCameraTestOn(state);
     }
 
   };
