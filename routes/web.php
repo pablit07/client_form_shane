@@ -24,8 +24,30 @@ $app->get('/', function () use ($app) {
 // }]);
 
 function start_cam() {
-	// $cmd = '/Users/paulkohlhoff/Projects/dice/dice camera > /dev/null 2>&1 & echo $!; ';
-	$cmd = 'xvfb-run /home/ubuntu/dice/dice.py > /dev/null 2>&1 & echo $!;';
+	$camera_rtsp_port = Setting::firstOrCreate(['name' => 'camerartspport']);
+	$camera_http_port = Setting::firstOrCreate(['name' => 'camerahttpport']);
+	$ip_address = Setting::firstOrCreate(['name' => 'ipaddress']);
+
+	if (!$ip_address->value || !($camera_rtsp_port->value || $camera_http_port->value)) {
+		Log::error("Error with camera settings; check settings.");
+		return redirect('http://' . $_SERVER['HTTP_HOST'] . env('SITEURL') . '/public/error.html');
+	}
+
+	if ($camera_rtsp_port->value) {
+		$protocol = 'rtsp://';
+		$port = $camera_rtsp_port->value;
+	} else if ($camera_http_port->value) {
+		$protocol = 'http://';
+		$port = $camera_http_port->value;
+	}
+
+	$cam_address = $protocol . $ip_address->value . ':' . $port . '/' . 'cgi-bin/view/image?pro_0&1491257463051';
+
+	// $cmd = '/Users/paulkohlhoff/Projects/dice/dice ' . $cam_address . ' > /dev/null 2>&1 & echo $!; ';
+	$cmd = 'xvfb-run /home/ubuntu/dice/dice.py ' . $cam_address . ' > /dev/null 2>&1 & echo $!;';
+
+	Log::info('Running command: ' . $cmd);
+
 	$camera_pid = Setting::firstOrCreate(['name' => 'camerapid']);
 
 	if ($camera_pid->value) {
