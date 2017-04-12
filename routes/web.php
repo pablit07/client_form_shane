@@ -39,6 +39,8 @@ function start_cam() {
 
 	$camera_pid->value = $pid;
 	$camera_pid->save();
+
+	return $pid;
 }
 
 function stop_cam() {
@@ -50,16 +52,18 @@ function stop_cam() {
 		$camera_pid->value = null;
 		$camera_pid->save();
 	}
+
+	return $pid;
 }
 
 $app->get('startcam', function() {
-	start_cam();
+	$pid = start_cam();
 
 	return 'Success! pid=' . $pid;
 });
 
 $app->get('stopcam', function() {
-	stop_cam();
+	$pid = stop_cam();
 
 	return 'Success! killed pid=' . $pid;
 });
