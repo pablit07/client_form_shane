@@ -44,7 +44,7 @@ function start_cam() {
 	$cam_address = $protocol . $ip_address->value . ':' . $port . '/' . 'cgi-bin/view/image?pro_0&1491257463051';
 
 	// $cmd = '/Users/paulkohlhoff/Projects/dice/dice ' . $cam_address . ' > /dev/null 2>&1 & echo $!; ';
-	$cmd = 'xvfb-run /home/ubuntu/dice/dice.py "' . $cam_address . '" > /dev/null ; echo $!';
+	$cmd = 'xvfb-run /home/ubuntu/dice/dice.py "' . $cam_address . '" > /dev/null & echo $!;';
 
 	Log::info('Running command: ' . $cmd);
 
