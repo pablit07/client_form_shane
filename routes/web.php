@@ -11,6 +11,7 @@
 |
 */
 use App\Setting;
+use App\Roll;
 use Illuminate\Http\Request;
 
 
@@ -264,3 +265,17 @@ $app->get('spreadsheet/test', function() {
 	return response()->json(['is_valid' => $is_valid, 'is_access_token_expired' => $is_access_token_expired]);
 });
 
+$app->get('spreadsheet/addrow', function(Request $request) {
+	$accessToken = json_decode(Setting::where(['name' => 'apitoken'])->first()->value, true);
+	$spreadsheetId = Setting::where(['name' => 'spreadsheetid'])->first()->value;
+
+	$result = $request->input('result');
+	$timestamp = $request->input('timestamp');
+
+	$roll = new Roll;
+	$roll->timestamp = $timestamp;
+	$roll->result = $result;
+	$roll->save();
+
+	return response()->json(['id' => $roll->id]);
+});
