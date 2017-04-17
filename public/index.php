@@ -271,7 +271,7 @@ header.navbar {
     this.cameraRtspPort = ko.observable('554');
 
     this.testCameraSrc = ko.computed(function () {
-      return self.isCameraTestOn() ? ('http://'+self.cameraUser()+':'+self.cameraPw()+'@'+self.ipAddress()+':'+self.cameraHttpPort()+'/video.htm') : '';
+      return self.isCameraTestOn() ? ('http://'+window.location.host+':81/video.htm') : '';
     });
 
     this.load = function(setInitialState) {
