@@ -182,6 +182,8 @@ $app->post('settings', function (Request $request) {
     						 ]);
 });
 
+
+
 define('APPLICATION_NAME', 'Dice');
 define('CLIENT_SECRET_PATH', realpath(__DIR__ . '/..') . '/client_secret.json');
 // If modifying these scopes, delete your previously saved credentials
@@ -276,6 +278,21 @@ $app->get('spreadsheet/addrow', function(Request $request) {
 	$roll->timestamp = $timestamp;
 	$roll->result = $result;
 	$roll->save();
+
+	try {
+		$client = get_client();
+		$client->setAccessToken($accessToken);
+		$service = new Google_Service_Sheets($client);
+		$range = 'Sheet1';
+		$valueRange= new Google_Service_Sheets_ValueRange();
+		$valueRange->setValues(["values" => [$timestamp, $result]]);
+		$conf = ["valueInputOption" => "RAW"];
+		$ins = ["insertDataOption" => "INSERT_ROWS"];
+		$service->spreadsheets_values->append($spreadsheetId, $range, $valueRange, $conf, $ins);
+
+	} catch (Exception $ex) {
+		Log::error($ex->getMessage());
+	}
 
 	return response()->json(['id' => $roll->id]);
 });
