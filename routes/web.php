@@ -51,6 +51,13 @@ function start_cam() {
 	$camera_rtsp_port = Setting::firstOrCreate(['name' => 'camerartspport']);
 	$camera_http_port = Setting::firstOrCreate(['name' => 'camerahttpport']);
 	$ip_address = Setting::firstOrCreate(['name' => 'ipaddress']);
+	$camera_user = Setting::firstOrCreate(['name' => 'camerauser']);
+	$camera_pw = Setting::firstOrCreate(['name' => 'camerapw']);
+	$auth = '';
+
+	if ($camera_user->value && $camera_pw->value) {
+		$auth = $camera_user->value . ':' . $camera_pw->value . '@';
+	}
 
 	if (!$ip_address->value || !($camera_rtsp_port->value || $camera_http_port->value)) {
 		Log::error("Error with camera settings; check settings.");
@@ -65,7 +72,7 @@ function start_cam() {
 		$port = $camera_http_port->value;
 	}
 
-	$cam_address = $protocol . $ip_address->value . ':' . $port . '/' . 'cgi-bin/view/image?pro_0&1491257463051';
+	$cam_address = $protocol . $auth . $ip_address->value . ':' . $port . '/' . 'cgi-bin/view/image?pro_0&1491257463051';
 
 	// FFMPEG
 
