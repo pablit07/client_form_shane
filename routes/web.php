@@ -25,6 +25,29 @@ $app->get('/', function () use ($app) {
 // }]);
 
 function start_cam() {
+
+	// FFSERVER
+
+	$cmd = env('FFSERVER_COMMAND');
+	// $cmd = 'whoami';
+
+	Log::info('Running command: ' . $cmd);
+
+	$ffserver_pid = Setting::firstOrCreate(['name' => 'ffserverpid']);
+
+	if ($ffserver_pid->value) {
+		exec('kill ' . $ffserver_pid->value);
+		$ffserver_pid->value = null;
+	}
+
+	$outputfile = fopen(env('ALGORITHM_LOGFILE'), "w");
+	$pid = exec($cmd, $outputfile);
+
+	$ffserver_pid->value = $pid;
+	$ffserver_pid->save();
+
+	// get camera address / settings
+
 	$camera_rtsp_port = Setting::firstOrCreate(['name' => 'camerartspport']);
 	$camera_http_port = Setting::firstOrCreate(['name' => 'camerahttpport']);
 	$ip_address = Setting::firstOrCreate(['name' => 'ipaddress']);
@@ -44,8 +67,29 @@ function start_cam() {
 
 	$cam_address = $protocol . $ip_address->value . ':' . $port . '/' . 'cgi-bin/view/image?pro_0&1491257463051';
 
-	// $cmd = '/Users/paulkohlhoff/Projects/dice/dice ' . $cam_address . ' > /dev/null 2>&1 & echo $!; ';
-	$cmd = 'xvfb-run /home/ubuntu/dice/dice.py "' . $cam_address . '" > /dev/null & echo $!;';
+	// FFMPEG
+
+	$cmd = env('FFMPEG_COMMAND');
+	$cmd = str_replace('__ADDRESS__', $cam_address, $cmd);
+
+	Log::info('Running command: ' . $cmd);
+
+	$ffmpeg_pid = Setting::firstOrCreate(['name' => 'ffmpegpid']);
+
+	if ($ffmpeg_pid->value) {
+		exec('kill ' . $ffmpeg_pid->value);
+		$ffmpeg_pid->value = null;
+	}
+
+	$pid = exec($cmd, $outputfile);
+
+	$ffmpeg_pid->value = $pid;
+	$ffmpeg_pid->save();
+
+	// DICE.PY
+
+	$cmd = env('ALGORITHM_COMMAND');
+	$cmd = str_replace('__ADDRESS__', $cam_address, $cmd);
 
 	Log::info('Running command: ' . $cmd);
 
@@ -56,8 +100,6 @@ function start_cam() {
 		$camera_pid->value = null;
 	}
 
-	// $outputfile = fopen("/Users/paulkohlhoff/log.txt", "w");
-	$outputfile = fopen("/home/ubuntu/log.txt", "w");
 	$pid = exec($cmd, $outputfile);
 
 	$camera_pid->value = $pid;
@@ -67,6 +109,25 @@ function start_cam() {
 }
 
 function stop_cam() {
+	
+	$ffmpeg_pid = Setting::firstOrCreate(['name' => 'ffmpegpid']);
+	$pid = $ffmpeg_pid->value;
+
+	if ($pid) {
+		exec('kill ' . $pid);
+		$ffmpeg_pid->value = null;
+		$ffmpeg_pid->save();
+	}
+	
+	$ffserver_pid = Setting::firstOrCreate(['name' => 'ffserverpid']);
+	$pid = $ffserver_pid->value;
+
+	if ($pid) {
+		exec('kill ' . $pid);
+		$ffserver_pid->value = null;
+		$ffserver_pid->save();
+	}
+
 	$camera_pid = Setting::firstOrCreate(['name' => 'camerapid']);
 	$pid = $camera_pid->value;
 
@@ -182,6 +243,53 @@ $app->post('settings', function (Request $request) {
     						 ]);
 });
 
+$app->get('status', function (Request $request) {
+	$last_write = Setting::firstOrCreate(['name' => 'lastwrite']);
+	if ($last_write->value === '1') {
+		$message1 = 'Writing result...';
+		$message2 = '';
+		$message3 = '';
+		$last_write->value = '0';
+		$last_write->save();
+	} else {
+
+		$camera_pid = Setting::firstOrCreate(['name' => 'camerapid']);
+		$cpid = $camera_pid->value;
+
+		$ffserver_pid = Setting::firstOrCreate(['name' => 'ffserverpid']);
+		$fspid = $ffserver_pid->value;
+
+		$ffmpeg_pid = Setting::firstOrCreate(['name' => 'ffmpegpid']);
+		$fmpid = $ffmpeg_pid->value;
+
+		$is_running_str = exec('ps -p ' . $cpid . ' && echo RUNNING');
+		$is_algorithm_running = strpos($is_running_str, 'RUNNING') !== false;
+
+		$is_ffserver_running_str = exec('ps -p ' . $fspid . ' && echo RUNNING');
+		$is_ffserver_running = strpos($is_ffserver_running_str, 'RUNNING') !== false;
+
+		$is_ffmpeg_running_str = exec('ps -p ' . $fmpid . ' && echo RUNNING');
+		$is_ffmpeg_running = strpos($is_ffmpeg_running_str, 'RUNNING') !== false;
+
+		$message1 = 'Algorithm not running.';
+		if ($is_algorithm_running) {
+			$message1 = 'Reading camera...';
+		}
+
+		$message2 = ' FFSERVER not running.';
+		if ($is_ffserver_running) {
+			$message2 = ' FFSERVER active...';
+		}
+
+		$message3 = ' FFMPEG not running.';
+		if ($is_ffmpeg_running) {
+			$message3 = ' FFMPEG active...';
+		}
+	}
+
+	return response()->json(['message' => $message1 . $message2 . $message3]);
+});
+
 
 
 define('APPLICATION_NAME', 'Dice');
@@ -278,6 +386,10 @@ $app->get('spreadsheet/addrow', function(Request $request) {
 	$roll->timestamp = $timestamp;
 	$roll->result = $result;
 	$roll->save();
+
+	$last_write = Setting::firstOrCreate(['name' => 'lastwrite']);
+	$last_write->value = '1';
+	$last_write->save();
 
 	try {
 		$client = get_client();

@@ -88,16 +88,28 @@ header.navbar {
   top: -30px;
   position: relative;
 }
+.blinker.invisible {
+  background-color: transparent;
+  border-color: transparent;
+}
 </style>
 <header class="navbar navbar-light">
-  <h2 class="viewport_title">
+  <h1 class="viewport_title">
     <i class="fa fa-braille"></i> Craps Roll Recorder <i class="fa fa-braille"></i>
-  </h2>
+  </h1>
   <div class="pull-right">
       <button id="btn-authorize-google-drive" data-bind='click: authorize, text: (needsGoogleAuth() ? "Authorize Google Drive" : "Google Drive Authorized"), enable: needsGoogleAuth()'></button>
   </div>
 </header>
+<div class="container" style="margin-bottom: 20px">
+  <div class="col-md-12">
+    <h4>Status</h4>
+    <div class="col-md-12"><span class='badge blinker' data-bind="css: {invisible: !isChangingStatus()}">&nbsp;</span>&nbsp;<span data-bind="text: statusMessage"></span></div>
+  </div>
+</div>
+
 <div class="container">
+  <h2>Settings</h2> 
 
 <form id="sellerform" class="form form_wrap_light" data-toggle="validator" role="form" name="seller_form" method="post" action="/home-value-api/" autocomplete="off">
 <!-- class="inbound-now-form wpl-track-me inbound-track"-->
@@ -242,7 +254,7 @@ header.navbar {
 </form>
 </div>
 <br><br>
-<div class="container">
+<div class="container" style="visibility: hidden">
   <div class="col-md-12">
     <h4>Camera Test</h4>
     <ul class="nav nav-pills">
@@ -269,9 +281,11 @@ header.navbar {
     this.cameraPw = ko.observable('admin');
     this.cameraHttpPort = ko.observable('20001');
     this.cameraRtspPort = ko.observable('554');
+    this.statusMessage = ko.observable('Not started');
+    this.isChangingStatus = ko.observable(true);
 
     this.testCameraSrc = ko.computed(function () {
-      return self.isCameraTestOn() ? ('http://'+window.location.host+':81/video.htm') : '';
+      return self.isCameraTestOn() ? ('http://'+window.location.host+':8090/stream.mjpeg') : '';
     });
 
     this.load = function(setInitialState) {
@@ -283,11 +297,12 @@ header.navbar {
         self.cameraPw(data.camera_pw);
         self.cameraHttpPort(data.camera_http_port);
         self.cameraRtspPort(data.camera_rtsp_port);
+        if (data.camera_state) self.startPolling();
       });
 
       $.get('../api/spreadsheet/test', function(data) {
         if (!data.is_valid) {
-          alert('Error reading from spreadsheet!');
+          alert('Error reading from spreadsheet. Has Google Drive authorization expired?');
         }
         self.needsGoogleAuth(data.is_access_token_expired);
       });
@@ -335,6 +350,31 @@ header.navbar {
 
     this.cameraTest = function(state) {
       self.isCameraTestOn(state);
+    }
+
+    this.startPolling = function() {
+      if (self.pollingInterval) clearInterval(self.pollingInterval);
+      self.pollingInterval = setInterval(function() {
+        $.get('../api/status').done(function(data) {
+            self.updateStatus(data.message);
+          }).fail(function() {
+            self.updateStatus('Error reaching server');
+          });
+      }, 1000);
+    }
+
+    this.stopPolling = function() {
+      if (self.pollingInterval) clearInterval(self.pollingInterval);
+      self.updateStatus('Not started');
+    }
+
+    this.updateStatus = function(message) {
+      if (message !== self.statusMessage())
+      {
+        self.isChangingStatus(true);
+        setTimeout(function() { self.isChangingStatus(false); }, 25);
+      }
+      self.statusMessage(message);
     }
 
   };
